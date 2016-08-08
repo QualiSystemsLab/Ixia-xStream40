@@ -1,0 +1,327 @@
+
+{
+    "driverRequest": {
+        "actions": [
+            {
+                "actionId": "0c8146ef-7866-4729-a4f4-8ff4834b6137_3a95bb4f-9507-49f1-b76d-c3d617bc4498",
+                "actionTarget": {
+                    "fullAddress": "192.168.85.18/21",
+                    "fullName": "Ixia52Xx/PA04",
+                    "type": "actionTarget"
+                },
+                "connectionId": "0c8146ef-7866-4729-a4f4-8ff4834b6137",
+                "connectionParams": {
+                    "mode": "Access",
+                    "type": "setVlanParameter",
+                    "vlanId": "2",
+                    "vlanServiceAttributes": [
+                        {
+                            "attributeName": "Allocation Ranges",
+                            "attributeValue": "2-4094",
+                            "type": "vlanServiceAttribute"
+                        },
+                        {
+                            "attributeName": "Isolation Level",
+                            "attributeValue": "Exclusive",
+                            "type": "vlanServiceAttribute"
+                        },
+                        {
+                            "attributeName": "Access Mode",
+                            "attributeValue": "Access",
+                            "type": "vlanServiceAttribute"
+                        },
+                        {
+                            "attributeName": "VLAN ID",
+                            "attributeValue": "",
+                            "type": "vlanServiceAttribute"
+                        },
+                        {
+                            "attributeName": "Pool Name",
+                            "attributeValue": "",
+                            "type": "vlanServiceAttribute"
+                        },
+                        {
+                            "attributeName": "Virtual Network",
+                            "attributeValue": "",
+                            "type": "vlanServiceAttribute"
+                        },
+                        {
+                            "attributeName": "Default VLAN",
+                            "attributeValue": "",
+                            "type": "vlanServiceAttribute"
+                        },
+                        {
+                            "attributeName": "QnQ",
+                            "attributeValue": "False",
+                            "type": "vlanServiceAttribute"
+                        },
+                        {
+                            "attributeName": "CTag",
+                            "attributeValue": "",
+                            "type": "vlanServiceAttribute"
+                        }
+                    ]
+                },
+                "connectorAttributes": [
+                    {
+                        "attributeName": "Selected Network",
+                        "attributeValue": "2",
+                        "type": "connectorAttribute"
+                    }
+                ],
+                "customActionAttributes": [],
+                "type": "setVlan"
+            },
+            {
+                "actionId": "0c8146ef-7866-4729-a4f4-8ff4834b6137_67389f29-20a6-4fe5-b5f8-ce933c4cd56d",
+                "actionTarget": {
+                    "fullAddress": "192.168.85.18/19",
+                    "fullName": "Ixia52Xx/PA02",
+                    "type": "actionTarget"
+                },
+                "connectionId": "0c8146ef-7866-4729-a4f4-8ff4834b6137",
+                "connectionParams": {
+                    "mode": "Access",
+                    "type": "setVlanParameter",
+                    "vlanId": "2",
+                    "vlanServiceAttributes": [
+                        {
+                            "attributeName": "Allocation Ranges",
+                            "attributeValue": "2-4094",
+                            "type": "vlanServiceAttribute"
+                        },
+                        {
+                            "attributeName": "Isolation Level",
+                            "attributeValue": "Exclusive",
+                            "type": "vlanServiceAttribute"
+                        },
+                        {
+                            "attributeName": "Access Mode",
+                            "attributeValue": "Access",
+                            "type": "vlanServiceAttribute"
+                        },
+                        {
+                            "attributeName": "VLAN ID",
+                            "attributeValue": "",
+                            "type": "vlanServiceAttribute"
+                        },
+                        {
+                            "attributeName": "Pool Name",
+                            "attributeValue": "",
+                            "type": "vlanServiceAttribute"
+                        },
+                        {
+                            "attributeName": "Virtual Network",
+                            "attributeValue": "",
+                            "type": "vlanServiceAttribute"
+                        },
+                        {
+                            "attributeName": "Default VLAN",
+                            "attributeValue": "",
+                            "type": "vlanServiceAttribute"
+                        },
+                        {
+                            "attributeName": "QnQ",
+                            "attributeValue": "False",
+                            "type": "vlanServiceAttribute"
+                        },
+                        {
+                            "attributeName": "CTag",
+                            "attributeValue": "",
+                            "type": "vlanServiceAttribute"
+                        }
+                    ]
+                },
+                "connectorAttributes": [
+                    {
+                        "attributeName": "Selected Network",
+                        "attributeValue": "2",
+                        "type": "connectorAttribute"
+                    }
+                ],
+                "customActionAttributes": [],
+                "type": "setVlan"
+            },
+            {
+                "actionId": "2be8beb4-659f-4f16-bb95-46bfbbe18af4_61fd4ae1-8d64-4e6a-9bcf-3d55f3867fd0",
+                "actionTarget": {
+                    "fullAddress": "192.168.85.18/20",
+                    "fullName": "Ixia52Xx/PA03",
+                    "type": "actionTarget"
+                },
+                "connectionId": "2be8beb4-659f-4f16-bb95-46bfbbe18af4",
+                "connectionParams": {
+                    "mode": "Access",
+                    "type": "setVlanParameter",
+                    "vlanId": "3",
+                    "vlanServiceAttributes": [
+                        {
+                            "attributeName": "Allocation Ranges",
+                            "attributeValue": "2-4094",
+                            "type": "vlanServiceAttribute"
+                        },
+                        {
+                            "attributeName": "Isolation Level",
+                            "attributeValue": "Exclusive",
+                            "type": "vlanServiceAttribute"
+                        },
+                        {
+                            "attributeName": "Access Mode",
+                            "attributeValue": "Access",
+                            "type": "vlanServiceAttribute"
+                        },
+                        {
+                            "attributeName": "VLAN ID",
+                            "attributeValue": "",
+                            "type": "vlanServiceAttribute"
+                        },
+                        {
+                            "attributeName": "Pool Name",
+                            "attributeValue": "",
+                            "type": "vlanServiceAttribute"
+                        },
+                        {
+                            "attributeName": "Virtual Network",
+                            "attributeValue": "",
+                            "type": "vlanServiceAttribute"
+                        },
+                        {
+                            "attributeName": "Default VLAN",
+                            "attributeValue": "",
+                            "type": "vlanServiceAttribute"
+                        },
+                        {
+                            "attributeName": "QnQ",
+                            "attributeValue": "False",
+                            "type": "vlanServiceAttribute"
+                        },
+                        {
+                            "attributeName": "CTag",
+                            "attributeValue": "",
+                            "type": "vlanServiceAttribute"
+                        }
+                    ]
+                },
+                "connectorAttributes": [
+                    {
+                        "attributeName": "Selected Network",
+                        "attributeValue": "3",
+                        "type": "connectorAttribute"
+                    }
+                ],
+                "customActionAttributes": [],
+                "type": "setVlan"
+            },
+            {
+                "actionId": "2be8beb4-659f-4f16-bb95-46bfbbe18af4_9657cc54-4bde-4abb-a7fb-7d01b15bf3a4",
+                "actionTarget": {
+                    "fullAddress": "192.168.85.18/18",
+                    "fullName": "Ixia52Xx/PA01",
+                    "type": "actionTarget"
+                },
+                "connectionId": "2be8beb4-659f-4f16-bb95-46bfbbe18af4",
+                "connectionParams": {
+                    "mode": "Access",
+                    "type": "setVlanParameter",
+                    "vlanId": "3",
+                    "vlanServiceAttributes": [
+                        {
+                            "attributeName": "Allocation Ranges",
+                            "attributeValue": "2-4094",
+                            "type": "vlanServiceAttribute"
+                        },
+                        {
+                            "attributeName": "Isolation Level",
+                            "attributeValue": "Exclusive",
+                            "type": "vlanServiceAttribute"
+                        },
+                        {
+                            "attributeName": "Access Mode",
+                            "attributeValue": "Access",
+                            "type": "vlanServiceAttribute"
+                        },
+                        {
+                            "attributeName": "VLAN ID",
+                            "attributeValue": "",
+                            "type": "vlanServiceAttribute"
+                        },
+                        {
+                            "attributeName": "Pool Name",
+                            "attributeValue": "",
+                            "type": "vlanServiceAttribute"
+                        },
+                        {
+                            "attributeName": "Virtual Network",
+                            "attributeValue": "",
+                            "type": "vlanServiceAttribute"
+                        },
+                        {
+                            "attributeName": "Default VLAN",
+                            "attributeValue": "",
+                            "type": "vlanServiceAttribute"
+                        },
+                        {
+                            "attributeName": "QnQ",
+                            "attributeValue": "False",
+                            "type": "vlanServiceAttribute"
+                        },
+                        {
+                            "attributeName": "CTag",
+                            "attributeValue": "",
+                            "type": "vlanServiceAttribute"
+                        }
+                    ]
+                },
+                "connectorAttributes": [
+                    {
+                        "attributeName": "Selected Network",
+                        "attributeValue": "3",
+                        "type": "connectorAttribute"
+                    }
+                ],
+                "customActionAttributes": [],
+                "type": "setVlan"
+            }
+        ]
+    }
+}
+-------------------------------------
+Response
+{
+    "driverResponse": {
+        "actionResults": [
+            {
+                "actionId": "0c8146ef-7866-4729-a4f4-8ff4834b6137_3a95bb4f-9507-49f1-b76d-c3d617bc4498",
+                "errorMessage": "",
+                "infoMessage": "",
+                "success": "True",
+                "type": "setVlan",
+                "updatedInterface": "None"
+            },
+            {
+                "actionId": "0c8146ef-7866-4729-a4f4-8ff4834b6137_67389f29-20a6-4fe5-b5f8-ce933c4cd56d",
+                "errorMessage": "",
+                "infoMessage": "",
+                "success": "True",
+                "type": "setVlan",
+                "updatedInterface": "None"
+            },
+            {
+                "actionId": "2be8beb4-659f-4f16-bb95-46bfbbe18af4_61fd4ae1-8d64-4e6a-9bcf-3d55f3867fd0",
+                "errorMessage": "",
+                "infoMessage": "",
+                "success": "True",
+                "type": "setVlan",
+                "updatedInterface": "None"
+            },
+            {
+                "actionId": "2be8beb4-659f-4f16-bb95-46bfbbe18af4_9657cc54-4bde-4abb-a7fb-7d01b15bf3a4",
+                "errorMessage": "",
+                "infoMessage": "",
+                "success": "True",
+                "type": "setVlan",
+                "updatedInterface": "None"
+            }
+        ]
+    }
+}

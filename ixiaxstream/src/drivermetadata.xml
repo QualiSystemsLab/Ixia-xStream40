@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Driver Description="Describe the purpose of your CloudShell shell" MainClass="driver.Ixia52XxDriver" Name="Ixia52XxDriver" Version="1.0.0">
+    <Layout>
+        <Category Name="Commands">
+
+
+        </Category>
+        <Category Name="Hidden Commands">
+            <Command Description="Discovers the resource structure and attributes" Name="get_inventory" />
+            <Command Name="ApplyConnectivityChanges" DisplayName="ApplyConnectivityChanges" Tags="allow_unreserved">
+                    <Parameters>
+                      <Parameter Name="request" Type="String" Mandatory = "True" DefaultValue="" Description=""/>
+                    </Parameters>
+            </Command>
+        </Category>
+
+    </Layout>
+</Driver>

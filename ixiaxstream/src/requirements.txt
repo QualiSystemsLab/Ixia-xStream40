@@ -1,0 +1,3 @@
+cloudshell-shell-core
+requests
+cloudshell_automation_api
