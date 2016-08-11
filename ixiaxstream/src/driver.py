@@ -5,6 +5,9 @@ import paramiko
 import re
 import json
 import sys
+import time
+import datetime
+from SSHManager import SSHManager
 
 class IxiaxstreamDriver (ResourceDriverInterface):
 
@@ -61,31 +64,130 @@ class IxiaxstreamDriver (ResourceDriverInterface):
         """
         pass
 
-    def send_custom_command(self, context, command):
-        """
-        Executes a custom command on the device
-        :param ResourceCommandContext context: The context object for the command with resource and reservation info
-        :param str command: The command to run. Note that commands that require a response are not supported.
-        :return: result
-        :rtype: str
-        """
-        pass
-
-    def send_custom_config_command(self, context, command):
-        """
-        Executes a custom command on the device in configuration mode
-        :param ResourceCommandContext context: The context object for the command with resource and reservation info
-        :param str command: The command to run. Note that commands that require a response are not supported.
-        :return: result
-        :rtype: str
-        """
-        pass
 
     def shutdown(self, context):
         """
         Sends a graceful shutdown to the device
         :param ResourceCommandContext context: The context object for the command with resource and reservation info
         """
+        pass
+
+    def health_check(self, context):
+        """
+        Sends a graceful shutdown to the device
+        :param ResourceCommandContext context: The context object for the command with resource and reservation info
+        """
+
+        session = CloudShellAPISession(host=context.connectivity.server_address,
+                                       token_id=context.connectivity.admin_auth_token,
+                                       domain="Global")
+
+        pw = session.DecryptPassword(context.resource.attributes['Password']).Value
+        un = context.resource.attributes["User"]
+
+        try:
+            ssh = paramiko.SSHClient()
+            ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+            ssh.connect(context.resource.address, username=un, password=pw,allow_agent=False,look_for_keys=False)
+            time.sleep(1)
+            ssh.close()
+            session.SetResourceLiveStatus(context.resource.name,"Online", "Healthcheck passed at "+str(datetime.datetime.utcnow()))
+        except:
+            session.SetResourceLiveStatus(context.resource.name,"Error", "Healthcheck failed at "+str(datetime.datetime.utcnow()))
+        pass
+
+    def loadConfiguration(self, context, config):
+        """
+        Executes a custom command on the device in configuration mode
+        :param ResourceCommandContext context: The context object for the command with resource and reservation info
+        :param str config: file on box to load
+        :return: result
+        :rtype: str
+        """
+
+        session = CloudShellAPISession(host=context.connectivity.server_address,
+                                       token_id=context.connectivity.admin_auth_token,
+                                       domain="Global")
+
+        session.WriteMessageToReservationOutput(context.reservation.reservation_id, "Loading configuration named " + config + "onto box "+ context.resource.name+"...")
+        pw = session.DecryptPassword(context.resource.attributes['Password']).Value
+        un = context.resource.attributes["User"]
+        ip = context.resource.address
+
+        ssh_manager = SSHManager(un, pw, ip)
+        prompt = '.*[$#>] *$'
+        out = ssh_manager.connect(prompt)
+        print out
+        out = ssh_manager.sendCommand("config",prompt)
+        print out
+        out = ssh_manager.sendCommand("file load filename "+config+" format cli",prompt)
+        print out
+        out = ssh_manager.sendCommand("commit",prompt)
+        print out
+        ssh_manager.disconnect()
+
+        pass
+
+    def saveConfiguration(self, context, config):
+        """
+        Executes a custom command on the device in configuration mode
+        :param ResourceCommandContext context: The context object for the command with resource and reservation info
+        :param str config: file on box to load
+        :return: result
+        :rtype: str
+        """
+
+        session = CloudShellAPISession(host=context.connectivity.server_address,
+                                       token_id=context.connectivity.admin_auth_token,
+                                       domain="Global")
+
+        session.WriteMessageToReservationOutput(context.reservation.reservation_id, "Saving configuration named " + config + " onto box "+ context.resource.name+"...")
+        pw = session.DecryptPassword(context.resource.attributes['Password']).Value
+        un = context.resource.attributes["User"]
+
+        ssh = paramiko.SSHClient()
+        ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+        ssh.connect(context.resource.address, username=un, password=pw,allow_agent=False,look_for_keys=False)
+
+        cmd = "file save filename "+config+" format cli"
+        ssh_stdin, ssh_stdout, ssh_stderr = ssh.exec_command(cmd)
+        retStr = ""
+        for line in ssh_stdout.readlines():
+            retStr = retStr + "<br />"
+        session.WriteMessageToReservationOutput(context.reservation.reservation_id, retStr)
+        ssh.close()
+        pass
+
+    def listConfigurations(self, context):
+        """
+        Executes a custom command on the device in configuration mode
+        :param ResourceCommandContext context: The context object for the command with resource and reservation info
+        :return: result
+        :rtype: str
+        """
+
+        session = CloudShellAPISession(host=context.connectivity.server_address,
+                                       token_id=context.connectivity.admin_auth_token,
+                                       domain="Global")
+
+        pw = session.DecryptPassword(context.resource.attributes['Password']).Value
+        un = context.resource.attributes["User"]
+
+        ssh = paramiko.SSHClient()
+        ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+        ssh.connect(context.resource.address, username=un, password=pw,allow_agent=False,look_for_keys=False)
+
+        cmd = "file list"
+        ssh_stdin, ssh_stdout, ssh_stderr = ssh.exec_command(cmd)
+
+        retStr = "Available configs are: <br><ul>"
+        for line in ssh_stdout.readlines():
+            retStr = retStr + "<li>"+line+"</li>"
+
+        retStr = retStr+"</ul>"
+        ssh.close()
+
+        session.WriteMessageToReservationOutput(context.reservation.reservation_id, retStr)
         pass
 
     # The ApplyConnectivityChanges function is intended to be used for using switches as connectivity providers
@@ -148,7 +250,8 @@ class IxiaxstreamDriver (ResourceDriverInterface):
         return AutoLoadDetails(sub_resources,attributes)
         pass
 
-    def ApplyConnectivityChanges(self, context, request):
+    # Commented this out as its not working yet
+    def _ApplyConnectivityChanges(self, context, request):
         """
         Configures VLANs on multiple ports or port-channels
         :param ResourceCommandContext context: The context object for the command with resource and reservation info
