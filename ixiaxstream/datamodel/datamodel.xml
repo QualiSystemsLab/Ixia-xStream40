@@ -180,6 +180,6 @@
     </ResourceFamily>
   </ResourceFamilies>
   <DriverDescriptors>
-      <DriverDescriptor Name="Ixiaxstream" DriverType="PythonDriver" />
+      <DriverDescriptor Name="IxiaxstreamDriver" DriverType="PythonDriver" />
   </DriverDescriptors>
 </DataModelInfo>

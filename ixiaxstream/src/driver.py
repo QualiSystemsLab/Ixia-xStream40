@@ -1,7 +1,10 @@
 from cloudshell.shell.core.resource_driver_interface import ResourceDriverInterface
 from cloudshell.shell.core.driver_context import InitCommandContext, ResourceCommandContext, AutoLoadResource,  AutoLoadAttribute, AutoLoadDetails
 from cloudshell.api.cloudshell_api import CloudShellAPISession
+import paramiko
+import re
 import json
+import sys
 
 class IxiaxstreamDriver (ResourceDriverInterface):
 
@@ -107,30 +110,42 @@ class IxiaxstreamDriver (ResourceDriverInterface):
         :return Attribute and sub-resource information for the Shell resource
         :rtype: AutoLoadDetails
         """
-        # # Add sub resources details
-        # sub_resources = [ AutoLoadResource(model ='Generic Chassis',name= 'Chassis 1', relative_address='1'),
-        # AutoLoadResource(model='Generic Module',name= 'Module 1',relative_address= '1/1'),
-        # AutoLoadResource(model='Generic Port',name= 'Port 1', relative_address='1/1/1'),
-        # AutoLoadResource(model='Generic Port', name='Port 2', relative_address='1/1/2'),
-        # AutoLoadResource(model='Generic Power Port', name='Power Port', relative_address='1/PP1')]
-        #
-        #
-        # attributes = [ AutoLoadAttribute(relative_address='', attribute_name='Location', attribute_value='Santa Clara Lab'),
-        #                AutoLoadAttribute('', 'Model', 'Catalyst 3850'),
-        #                AutoLoadAttribute('', 'Vendor', 'Cisco'),
-        #                AutoLoadAttribute('1', 'Serial Number', 'JAE053002JD'),
-        #                AutoLoadAttribute('1', 'Model', 'WS-X4232-GB-RJ'),
-        #                AutoLoadAttribute('1/1', 'Model', 'WS-X4233-GB-EJ'),
-        #                AutoLoadAttribute('1/1', 'Serial Number', 'RVE056702UD'),
-        #                AutoLoadAttribute('1/1/1', 'MAC Address', 'fe80::e10c:f055:f7f1:bb7t16'),
-        #                AutoLoadAttribute('1/1/1', 'IPv4 Address', '192.168.10.7'),
-        #                AutoLoadAttribute('1/1/2', 'MAC Address', 'te67::e40c:g755:f55y:gh7w36'),
-        #                AutoLoadAttribute('1/1/2', 'IPv4 Address', '192.168.10.9'),
-        #                AutoLoadAttribute('1/PP1', 'Model', 'WS-X4232-GB-RJ'),
-        #                AutoLoadAttribute('1/PP1', 'Port Description', 'Power'),
-        #                AutoLoadAttribute('1/PP1', 'Serial Number', 'RVE056702UD')]
-        #
-        # return AutoLoadDetails(sub_resources,attributes)
+
+        session = CloudShellAPISession(host=context.connectivity.server_address,
+                                       token_id=context.connectivity.admin_auth_token,
+                                       domain="Global")
+
+        pw = session.DecryptPassword(context.resource.attributes['Password']).Value
+        un = context.resource.attributes["User"]
+
+        sub_resources = []
+        attributes = [AutoLoadAttribute('', 'Model', 'xStream40'),AutoLoadAttribute('', 'Vendor', 'Ixia')]
+
+        cmd = "show port"
+        ssh = paramiko.SSHClient()
+        ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+        ssh.connect(context.resource.address, username=un, password=pw,allow_agent=False,look_for_keys=False)
+        ssh_stdin, ssh_stdout, ssh_stderr = ssh.exec_command(cmd)
+
+        lines = ssh_stdout.readlines()
+        p = re.compile(ur'^\s*[0-9]*\s*P')
+
+        for l in lines:
+            # check if it is a line with port
+            if re.search(p, l) is not None:
+                cols = re.split('\s{2,}', l.strip())
+                if re.search(p, l) is not None:
+                    cols = re.split('\s{2,}', l.strip())
+                    if (cols[0] != "Port Name"):
+                        speed = cols[5]
+                        if speed == "keep":
+                            speed = cols[4]
+                        sub_resources.append(AutoLoadResource(model='Packet Broker Port Port', name=cols[1], relative_address=str(cols[0])))
+                        attributes.append(AutoLoadAttribute(str(cols[0]), 'Port Speed', speed))
+
+
+        ssh.close()
+        return AutoLoadDetails(sub_resources,attributes)
         pass
 
     def ApplyConnectivityChanges(self, context, request):
@@ -155,6 +170,8 @@ class IxiaxstreamDriver (ResourceDriverInterface):
         #Build Response
         response = {"driverResponse":{"actionResults":[]}}
 
+        pair = []
+        previousCid = ""
 
         for actionResult in requestJson['driverRequest']['actions']:
             actionResultTemplate = {"actionId":None, "type":None, "infoMessage":"", "errorMessage":"", "success":"True", "updatedInterface":"None"}
@@ -162,8 +179,50 @@ class IxiaxstreamDriver (ResourceDriverInterface):
             actionResultTemplate['actionId'] = str(actionResult['actionId'])
             response["driverResponse"]["actionResults"].append(actionResultTemplate)
 
+            # now for the crazy... the actions array is in pairs of endpoints, not a line/connection. so pack them up together
+            cid = actionResult["connectionId"]
 
+            #if its the same cid, add to the pair list
+            # if not the same, must be a new connector
+            if previousCid != cid:
 
+                previousCid = cid
+                pair = [actionResult["actionTarget"]["fullName"]]
+
+            else:
+                pair.append(actionResult["actionTarget"]["fullName"])
+                # check if not first run
+                if len(pair) == 2:
+                    src = str(pair[0])
+                    dst = str(pair[1])
+
+                # make connector
+                if (str(actionResult['type']) == "setVlan"):
+                    # add
+                    pw = session.DecryptPassword(context.resource.attributes['Password']).Value
+                    un = context.resource.attributes["User"]
+                    cmd = "config"
+
+                    session.WriteMessageToReservationOutput(context.reservation.reservation_id, "Adding " + src + " to " + dst)
+
+                    try:
+                        ssh = paramiko.SSHClient()
+                        ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+                        ssh.connect(context.resource.address, username=un, password=pw,allow_agent=False,look_for_keys=False)
+
+                        ssh_stdin, ssh_stdout, ssh_stderr = ssh.exec_command(cmd)
+                        cmd = "map add in_ports "+src+" out_ports " + dst
+                        ssh_stdin, ssh_stdout, ssh_stderr = ssh.exec_command(cmd)
+                        session.WriteMessageToReservationOutput(context.reservation.reservation_id, ssh_stdout.readlines())
+                    except:
+                       session.WriteMessageToReservationOutput(context.reservation.reservation_id,"Unexpected error: " + str(sys.exc_info()[0]))
+                elif (str(actionResult['type']) == "removeVlan"):
+                    # remove
+                    session.WriteMessageToReservationOutput(context.reservation.reservation_id, "Removing " + src + " to " + dst)
+                else:
+                    session.WriteMessageToReservationOutput(context.reservation.reservation_id, "huh?")
+
+        ssh.close()
         return 'command_json_result=' + str(response) + '=command_json_result_end'
 
         pass

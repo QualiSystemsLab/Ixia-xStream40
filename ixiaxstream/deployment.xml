@@ -8,8 +8,8 @@
     <port>8029</port>
 
     <!-- The server admin username, password and domain to use when deploying -->
-    <username>YOUR_USERNAME</username>
-    <password>YOUR_PASSWORD</password>
+    <username>admin</username>
+    <password>admin</password>
     <domain>Global</domain>
 
     <!-- Simple patterns to filter when sending the driver to the server separated by semicolons (e.g. "file.xml;logs/", also supports regular expressions),
